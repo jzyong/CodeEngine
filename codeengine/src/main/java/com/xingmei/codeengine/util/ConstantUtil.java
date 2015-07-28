@@ -19,7 +19,8 @@ public class ConstantUtil {
 	public static final String PRO_DESCRIPTION="description";
 	/**属性集合*/
 	public static final String PRO_LIST="properties";
-	
+	/**时间属性*/
+	public static final String DATE="date";
 	
 	
 
