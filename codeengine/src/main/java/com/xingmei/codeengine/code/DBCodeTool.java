@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.xingmei.codeengine.util.ConstantUtil;
 import com.xingmei.codeengine.util.ConstantUtil.TemplateConstant;
 import com.xingmei.codeengine.util.DateUtil;
+import com.xingmei.codeengine.util.StringUtil;
 import com.xingmei.codeengine.util.db.Column;
 import com.xingmei.codeengine.util.db.DBUtil;
 import com.xingmei.codeengine.util.freemarker.FreeMarkerUtil;
@@ -133,7 +134,8 @@ public class DBCodeTool {
                         template.process(data, new OutputStreamWriter(fos, "utf-8"));
                         fos.flush();
                         fos.close();
-                        log.info("表[{}] DAO 创建成功...", str);
+                        log.info(String.format("表[%-20s]\tDAO 创建成功...", str));
+
                     } else {
                         log.error("表[{}] 生成DAO失败,模板[{}] 未找到!!!", str, TemplateConstant.Dao.getName());
                     }
@@ -144,6 +146,68 @@ public class DBCodeTool {
             log.error("连接数据库失败");
         }
     }
+
+    /**
+     * 生成领域对象 源代码
+     * 
+     * @author JiangZhiYong
+     * @date 2015-11-26 17:28:59
+     */
+    public void generateDomain() throws Exception {
+        Connection dbConnection = DBUtil.getInstance().getDBConnection();
+        if (dbConnection != null) {
+            List<String> list = DBUtil.getTableName(dbConnection);
+            if (list != null) {
+                for (String str : list) {
+                    List<Column> columnDefines = DBUtil.getColumnDefine(dbConnection, str);
+                    if (columnDefines != null) {
+                        String packageStr = System.getProperty("domain.path").replace("\\", "."); //
+                        String codePath = System.getProperty("file.dir") + System.getProperty("domain.path") + "\\";
+                        String className = convertClassName(str);
+                        File file = new File(codePath);
+                        File parent = file.getParentFile();
+                        if (parent != null && !parent.exists()) {
+                            file.mkdirs();
+                        }
+                        codePath = codePath + className + ".java";
+
+
+                        FileOutputStream fos = new FileOutputStream(new File(codePath));
+                        Map<String, Object> data = new HashMap<String, Object>();
+                        data.put(ConstantUtil.PACKAGE, packageStr);
+                        data.put(ConstantUtil.CLASS_NAME, className);
+                        data.put(ConstantUtil.DATE, DateUtil.nowData(DateUtil.YYYY_MM_DD));
+                        List<HashMap<String, String>> pros = new ArrayList<HashMap<String, String>>();
+                        for (Column column : columnDefines) {
+                            if (column.getName().equalsIgnoreCase("id") || column.getName().equalsIgnoreCase("ut") || column.getName().equalsIgnoreCase("ct")) {
+                                continue;
+                            }
+                            HashMap<String, String> pro = new HashMap<String, String>();
+                            pro.put(ConstantUtil.PRO_TYPE, convertType(column.getType()));
+                            pro.put(ConstantUtil.PRO_NAME, column.getName());
+                            pro.put(ConstantUtil.PRO_DESCRIPTION, column.getDescription());
+                            pros.add(pro);
+                        }
+
+                        data.put(ConstantUtil.PRO_LIST, pros);
+                        Template template = FreeMarkerUtil.getInstance().getTemplate(TemplateConstant.DomainBean.getName());
+                        if (template != null) {
+                            template.process(data, new OutputStreamWriter(fos, "utf-8"));
+                            fos.flush();
+                            fos.close();
+                            log.info(String.format("表[%-20s]\tDomain 创建成功...", str));
+                        } else {
+                            log.error("表[{}] 生成Domain失败,模板[{}] 未找到!!!", str, TemplateConstant.DomainBean.getName());
+                        }
+                    }
+                }
+            }
+
+        } else {
+            log.error("连接数据库失败");
+        }
+    }
+
 
     /** 数据类型转换 */
     public String convertType(String type) {
@@ -156,4 +220,22 @@ public class DBCodeTool {
         return type;
     }
 
+    /**
+     * 转换类名称
+     * <p>
+     * eg: hero_chip --> HeroChip
+     * </p>
+     */
+    public String convertClassName(String className) {
+        if (!className.contains("_")) {
+            return StringUtil.capitalize(className);
+        }
+        String[] split = className.split("_");
+        StringBuffer sb = new StringBuffer(30);
+        for (int i = 0; i < split.length; i++) {
+            split[i] = StringUtil.capitalize(split[i]);
+            sb.append(split[i]);
+        }
+        return sb.toString();
+    }
 }

@@ -45,6 +45,7 @@ public class FreeMarkerUtil {
             cfg.setDirectoryForTemplateLoading(new File(templatePath));
             cfg.setObjectWrapper(new DefaultObjectWrapper(new Version(2, 3, 21)));
             cfg.setSharedVariable("upperFC", new UpperFirstCharacterDirective());// 首字母大写指令
+            cfg.setSharedVariable("lowerFC", new LowerFirstCharacterDirective());// 首字母小写指令
         } catch (IOException e) {
             e.printStackTrace();
         }

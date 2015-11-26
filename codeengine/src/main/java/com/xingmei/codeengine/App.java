@@ -18,6 +18,7 @@ public class App
 
         DBCodeTool.getInstance().generateHibernateBean();   //hibernate实体对象类
         DBCodeTool.getInstance().generateDao();             //dao类
+        DBCodeTool.getInstance().generateDomain();          //领域对象类
     }
 
     public void init() {

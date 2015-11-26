@@ -1,7 +1,7 @@
 package cn.xm.dota.base.storage.dao;
 
 import org.springframework.stereotype.Repository;
-import cn.xm.dota.base.storage.dto.${className}Dto;
+import cn.xm.dota.base.storage.dto.<@upperFC>${className}</@upperFC>Dto;
 
 /**
 *
