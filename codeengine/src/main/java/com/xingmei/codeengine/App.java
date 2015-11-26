@@ -16,7 +16,8 @@ public class App
         App app = new App();
         app.init();
 
-        DBCodeTool.getInstance().generateHibernateBean();   //生成hibernate实体对象
+        DBCodeTool.getInstance().generateHibernateBean();   //hibernate实体对象类
+        DBCodeTool.getInstance().generateDao();             //dao类
     }
 
     public void init() {

@@ -77,7 +77,7 @@ public class DBCodeTool {
                                 continue;
                             }
                             HashMap<String, String> pro = new HashMap<String, String>();
-                            pro.put(ConstantUtil.PRO_TYPE, column.getType());
+                            pro.put(ConstantUtil.PRO_TYPE, convertType(column.getType()));
                             pro.put(ConstantUtil.PRO_NAME, column.getName());
                             pro.put(ConstantUtil.PRO_DESCRIPTION, column.getDescription());
                             pros.add(pro);
@@ -102,10 +102,56 @@ public class DBCodeTool {
         }
     }
 
+    /**
+     * 生成数据库dao层
+     * 
+     * @author JiangZhiYong
+     * @date 2015-11-26 16:20:34
+     */
+    public void generateDao() throws Exception {
+        Connection dbConnection = DBUtil.getInstance().getDBConnection();
+        if (dbConnection != null) {
+            List<String> list = DBUtil.getTableName(dbConnection);
+            if (list != null) {
+                for (String str : list) {
+                    String codePath = System.getProperty("file.dir") + System.getProperty("dao.path") + "\\";  //
+                    String className = str.replaceFirst(str.substring(0, 1), str.substring(0, 1).toUpperCase());    //
+                    File file = new File(codePath);
+                    File parent = file.getParentFile();
+                    if (parent != null && !parent.exists()) {
+                        file.mkdirs();
+                    }
+                    codePath = codePath + className + "Dao.java";
+
+
+                    FileOutputStream fos = new FileOutputStream(new File(codePath));
+                    Map<String, Object> data = new HashMap<String, Object>();
+                    data.put(ConstantUtil.CLASS_NAME, str);
+                    data.put(ConstantUtil.DATE, DateUtil.nowData(DateUtil.YYYY_MM_DD));
+                    Template template = FreeMarkerUtil.getInstance().getTemplate(TemplateConstant.Dao.getName());
+                    if (template != null) {
+                        template.process(data, new OutputStreamWriter(fos, "utf-8"));
+                        fos.flush();
+                        fos.close();
+                        log.info("表[{}] DAO 创建成功...", str);
+                    } else {
+                        log.error("表[{}] 生成DAO失败,模板[{}] 未找到!!!", str, TemplateConstant.Dao.getName());
+                    }
+                }
+            }
+
+        } else {
+            log.error("连接数据库失败");
+        }
+    }
+
     /** 数据类型转换 */
     public String convertType(String type) {
         if (type.equalsIgnoreCase("timestamp")) {
             return "java.util.Date";
+        }
+        if (type.equalsIgnoreCase("text")) {
+            return "String";
         }
         return type;
     }

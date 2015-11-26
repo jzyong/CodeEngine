@@ -29,11 +29,7 @@ public class ConstantUtil {
 	 * */
 	public static enum TemplateConstant {
 
-		JavaBean("javabean.ftl", 1),
-		ExcelBean("excelBean.ftl",2),
-		MinaMessage("mina_message.ftl",3),
-		MinaMessagePool("mina_message_pool.ftl",4),
-		MinaTcpOpCode("mina_opcode.ftl",5),
+	    Dao("dao.ftl",5),
 		HibernateBean("HibernateBean.ftl",6);
 
 		private String name;
@@ -53,41 +49,6 @@ public class ConstantUtil {
 		}
 	}
 	
-	/**消息类型枚举
-	 * @author JiangZhiYong
-	 * @date 2014年11月18日11:52:35
-	 * */
-	public static enum MessageType{
-		/**前端向游戏服发送*/
-		ClientServer("CS", 1),
-		
-		/**游戏服-->世界服*/
-		ServerWorld("SW",2),
-		
-		/**游戏服-->前端*/
-		ServerClient("SC",3),
-		
-		/**世界服-->游戏服*/
-		WorldServer("WS",4),
-		
-		/**世界服-->前端*/
-		WorldClient("WC",5);
-
-		private String name;
-		private int index;
-		
-		private MessageType(String name, int index) {
-			this.name = name;
-			this.index = index;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public int getIndex() {
-			return index;
-		}
-	}
+	
 
 }
