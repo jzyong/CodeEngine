@@ -1,13 +1,15 @@
 package com.xingmei.codeengine;
 
 import com.xingmei.codeengine.code.DBCodeTool;
+import com.xingmei.codeengine.code.HandlerCodeTool;
 import com.xingmei.codeengine.util.ConfigUtil;
 import com.xingmei.codeengine.util.freemarker.FreeMarkerUtil;
 
 /**
- *代码生成工具
- *@author JiangZhiYong
- *@date 2015年6月19日15:30:06
+ * 代码生成工具
+ *
+ * @author JiangZhiYong
+ * @date 2015年6月19日15:30:06
  */
 public class App
 {
@@ -16,9 +18,11 @@ public class App
         App app = new App();
         app.init();
 
-        DBCodeTool.getInstance().generateHibernateBean();   //hibernate实体对象类
-        DBCodeTool.getInstance().generateDao();             //dao类
-        DBCodeTool.getInstance().generateDomain();          //领域对象类
+        DBCodeTool.getInstance().generateHibernateBean();           // hibernate实体对象类
+        DBCodeTool.getInstance().generateDao();                     // dao类
+        DBCodeTool.getInstance().generateDomain();                  // 领域对象类
+        HandlerCodeTool.getInstance().generateMessageHandler();     // 消息处理器
+
     }
 
     public void init() {

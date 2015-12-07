@@ -29,6 +29,8 @@ public class ConstantUtil {
      * @author JiangZhiYong
      */
     public static enum TemplateConstant {
+        /**消息处理器*/
+        MessageHandler("Messagehandler.ftl",3),
         /**领域对象*/
         DomainBean("DomainBean.ftl", 4),
         /**数据层*/
